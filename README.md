@@ -140,8 +140,6 @@ The **Gemini API key** is the only external credential this project requires.
 4. Copy the key — it looks like: `AIzaSy...`
 5. **Keep this key secret.** Never paste it into your Android code or commit it to git.
 
-> **Free tier:** Google AI Studio provides a free tier with generous limits (60 requests/minute as of 2026). No credit card required for development.
-
 ---
 
 ### 5.2 Create the Android Project in Android Studio
@@ -179,9 +177,9 @@ The backend is a **standalone Kotlin JVM project** — it runs on your computer 
 cd PatientSymptomPrescreener/backend
 
 # Set your Gemini API key as an environment variable
-export GEMINI_API_KEY=AIzaSy...your_key_here...   # macOS/Linux
-set GEMINI_API_KEY=AIzaSy...your_key_here...       # Windows CMD
-$env:GEMINI_API_KEY="AIzaSy...your_key_here..."    # Windows PowerShell
+export GEMINI_API_KEY=YOUR_KEY_HERE                 # macOS/Linux
+set GEMINI_API_KEY=YOUR_KEY_HERE                    # Windows CMD
+$env:GEMINI_API_KEY="YOUR_KEY_HERE"                 # Windows PowerShell
 
 # Run the backend
 ./gradlew run
@@ -202,7 +200,7 @@ curl http://localhost:8080/health
 
 1. Open IntelliJ IDEA → **Open** → select the `backend/` folder
 2. Go to **Run → Edit Configurations**
-3. Add an **Environment Variable**: `GEMINI_API_KEY=AIzaSy...`
+3. Add an **Environment Variable**: `GEMINI_API_KEY=YOUR_KEY_HERE`
 4. Run `Application.kt`
 
 ---
@@ -315,25 +313,25 @@ The Ktor backend is the security boundary. The Android app only calls `POST /ana
 
 **macOS / Linux (temporary — current session only):**
 ```bash
-export GEMINI_API_KEY=AIzaSy...
+export GEMINI_API_KEY=YOUR_KEY_HERE
 ./gradlew run
 ```
 
 **macOS / Linux (permanent — add to shell profile):**
 ```bash
-echo 'export GEMINI_API_KEY=AIzaSy...' >> ~/.zshrc   # or ~/.bashrc
+echo 'export GEMINI_API_KEY=YOUR_KEY_HERE' >> ~/.zshrc   # or ~/.bashrc
 source ~/.zshrc
 ```
 
 **Windows (Command Prompt):**
 ```cmd
-set GEMINI_API_KEY=AIzaSy...
+set GEMINI_API_KEY=YOUR_KEY_HERE
 gradlew.bat run
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GEMINI_API_KEY = "AIzaSy..."
+$env:GEMINI_API_KEY = "YOUR_KEY_HERE"
 .\gradlew run
 ```
 
@@ -341,7 +339,7 @@ $env:GEMINI_API_KEY = "AIzaSy..."
 1. Run → Edit Configurations
 2. Select your run config
 3. Click "Modify options" → "Environment variables"
-4. Add: `GEMINI_API_KEY=AIzaSy...`
+4. Add: `GEMINI_API_KEY=YOUR_KEY_HERE`
 
 **Production deployment (e.g., Google Cloud Run, AWS, Railway):**
 Set the environment variable in your hosting provider's dashboard or secrets manager. Never include it in a `Dockerfile` or `docker-compose.yml` committed to git.
@@ -360,38 +358,6 @@ cd backend
 The provided `RoutingTest.kt` tests:
 - `/health` endpoint returns HTTP 200
 - `/analyze` endpoint accepts a valid request body
-
-> Note: The `/analyze` test expects either 200 (if `GEMINI_API_KEY` is set) or 500 with a clear error (if not). In CI, either provide a test key via environment variable or mock the Gemini HTTP client.
-
-### Android UI tests
-
-Android Studio includes Espresso and Compose test support. Run instrumented tests with:
-
-```bash
-cd app
-./gradlew connectedAndroidTest
-```
-
-Recommended test cases to add:
-- `WelcomeScreenTest`: verify button is disabled until disclaimer is scrolled
-- `PatientInfoScreenTest`: verify "Next" navigation works
-- `SymptomsScreenTest`: verify chip toggling adds/removes from selected set
-- `ResultsScreenTest`: verify urgency level color mapping
-
-### Manual end-to-end test (smoke test)
-
-Use the cardiac emergency example from the design doc:
-
-| Field | Value |
-|---|---|
-| Age | 42 |
-| Sex | Male |
-| Conditions | HTN |
-| Allergies | None |
-| Symptoms | Sudden tightness in my chest and left arm pain for the past 20 minutes. Feeling very sweaty. |
-| Chips | Chest Pain, Shortness of Breath, Dizziness |
-
-Expected: Urgency level **IMMEDIATE**, categories including Acute Coronary Syndrome / Myocardial Infarction.
 
 ---
 

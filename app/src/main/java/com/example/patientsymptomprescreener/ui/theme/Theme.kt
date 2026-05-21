@@ -34,5 +34,3 @@ fun PatientScreenerTheme(content: @Composable () -> Unit) {
         content = content
     )
 }
-
-

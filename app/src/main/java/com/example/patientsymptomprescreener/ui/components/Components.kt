@@ -72,4 +72,3 @@ fun LoadingOverlay(message: String = "Analyzing...") {
         }
     }
 }
-
