@@ -20,7 +20,6 @@ android {
     }
 
     buildTypes {
-
         debug {
             buildConfigField(
                 "String",
@@ -28,16 +27,13 @@ android {
                 "\"${project.findProperty("GEMINI_API_KEY") ?: ""}\""
             )
         }
-
         release {
             isMinifyEnabled = false
-
             buildConfigField(
                 "String",
                 "GEMINI_API_KEY",
                 "\"${project.findProperty("GEMINI_API_KEY") ?: ""}\""
             )
-
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -62,9 +58,9 @@ android {
 
 dependencies {
     // ── Core ────────────────────────────────────────────────────────────────
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.2")
+    implementation("androidx.activity:activity-compose:1.9.0")
 
     // ── Compose ─────────────────────────────────────────────────────────────
     implementation(platform(libs.androidx.compose.bom))
@@ -95,10 +91,15 @@ dependencies {
 
     // ── Testing ─────────────────────────────────────────────────────────────
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
+
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
