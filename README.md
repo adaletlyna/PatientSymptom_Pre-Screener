@@ -1,7 +1,12 @@
 # 🏥 Patient Symptom Pre-Screener
 
-> **AI-Powered Medical Triage System** — Android app + Ktor backend middleware  
-> Based on the Technical System Design Report (April 2026)
+![Android](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Language-Kotlin-7F52FF?logo=kotlin&logoColor=white)
+![Compose](https://img.shields.io/badge/UI-Jetpack%20Compose-4285F4?logo=jetpackcompose&logoColor=white)
+![Ktor](https://img.shields.io/badge/Backend-Ktor-000000?logo=ktor&logoColor=white)
+![Gemini](https://img.shields.io/badge/AI-Google%20Gemini-4285F4?logo=google&logoColor=white)
+
+An **AI-powered medical triage system** designed for clinical waiting areas. This project captures patient demographics and symptoms, which are then securely analyzed by Google's Gemini AI via a Ktor middleware to provide triage recommendations for clinical staff.
 
 ---
 
@@ -67,7 +72,7 @@ PatientSymptomPrescreener/
 │       │   ├── AndroidManifest.xml
 │       │   └── java/
 │       │       ├── com/example/patientsymptomprescreener/
-│       │       │   ├── MainActivity.kt     ← App Entry Point
+│       │       │   ├── MainActivity.kt         ← App Entry Point
 │       │       │   ├── data/               ← Models & Repositories
 │       │       │   ├── network/            ← ApiService (Ktor Client)
 │       │       │   └── ui/screens/         ← Screen Composables
@@ -98,6 +103,70 @@ PatientSymptomPrescreener/
 
 ---
 
+## 4. Prerequisites
+
+| Tool | Minimum version | Download |
+|---|---|---|
+| Android Studio | Hedgehog (2023.1.1) or later | [Official Site](https://developer.android.com/studio) |
+| JDK | 17+ | Bundled with Android Studio |
+| Kotlin | 2.0.0 | Managed via Gradle |
+| Android SDK | API 26 (Android 8.0) | SDK Manager in Android Studio |
+| Android Emulator | API 26+ | AVD Manager |
+| Google AI Studio Account | — | To generate a Gemini API key |
+
+---
+
+## 5. Step-by-Step Setup Guide
+
+### 5.1 Get a Gemini API Key
+1. Go to **https://aistudio.google.com/app/apikey**
+2. Click **"Create API Key"** and copy the key string.
+3. Keep this key secret; do not commit it to version control.
+
+### 5.2 Configure and Run the Backend
+The backend requires the `GEMINI_API_KEY` as an environment variable.
+```bash
+cd backend
+# Set the environment variable
+export GEMINI_API_KEY=YOUR_KEY_HERE                 # macOS/Linux
+set GEMINI_API_KEY=YOUR_KEY_HERE                    # Windows CMD
+$env:GEMINI_API_KEY="YOUR_KEY_HERE"                 # Windows PowerShell
+# Start the server
+./gradlew run
+```
+
+### 5.3 Run the Android App
+1. Open the project in Android Studio.
+2. In `app/src/main/java/com/prescreener/network/ApiService.kt` (or your project's `ApiService.kt`), verify `BASE_URL = "http://10.0.2.2:8080"` (emulator's alias for localhost).
+3. Ensure your emulator or device is connected.
+4. Click **Run ▶** in the top toolbar.
+
+---
+
+## 6. AI Integration Deep Dive
+
+### Prompt Engineering
+The Ktor backend constructs a specific prompt for Gemini 1.5 Flash. It provides patient context (age, sex, history) and symptoms, then instructs the AI to return a structured JSON response.
+
+### Triage Logic
+The AI is instructed to categorize the patient into one of four urgency levels:
+- **Immediate**: Emergency conditions requiring instant intervention.
+- **Urgent**: High-priority care needed within minutes.
+- **Semi-Urgent**: Standard priority, stable condition.
+- **Non-Urgent**: Minor issues, routine follow-up.
+
+---
+
+## 7. API Keys — Complete Guide
+
+The `GEMINI_API_KEY` is handled exclusively by the backend middleware. This ensures that the key is never bundled with the Android application, protecting it from extraction via reverse engineering.
+
+**Backend Setup:**
+- **Local Development**: Use environment variables or IDE Run Configurations.
+- **Production**: Use a secrets manager (e.g., AWS Secrets Manager, Google Cloud Secret Manager).
+
+---
+
 ## 8. Testing
 
 The project includes a multi-tiered test suite to ensure the reliability of the triage process.
@@ -118,6 +187,15 @@ The project includes a multi-tiered test suite to ensure the reliability of the 
 **File:** `app/src/androidTest/java/com/prescreener/ui/navigation/NavigationTest.kt`
 - Verifies end-to-end user navigation flows on a device/emulator.
 - **Run command:** `./gradlew :app:connectedDebugAndroidTest`
+
+---
+
+## 9. Going to Production
+
+1. **Enable HTTPS**: Use SSL/TLS for your backend and update the Android `BASE_URL`.
+2. **Disable Cleartext**: Remove `android:usesCleartextTraffic="true"` from `AndroidManifest.xml`.
+3. **Authentication**: Implement authentication (e.g., OAuth2 or API Keys) to secure the `/analyze` endpoint.
+4. **Obfuscation**: Use R8/ProGuard to shrink and secure the Android code.
 
 ---
 
